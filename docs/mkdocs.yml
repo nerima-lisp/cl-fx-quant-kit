@@ -1,8 +1,81 @@
 site_name: fx-quant-kit
-site_description: Pure quantitative finance and FX calculations for Common Lisp
+site_description: A pure quantitative finance toolkit for Common Lisp.
+site_author: fx-quant-kit contributors
+site_url: https://nerima-lisp.github.io/cl-fx-quant-kit/
+repo_url: https://github.com/nerima-lisp/cl-fx-quant-kit
+repo_name: nerima-lisp/cl-fx-quant-kit
+edit_uri: edit/main/docs/src/
 docs_dir: src
+site_dir: ../site
+use_directory_urls: true
+copyright: Copyright &copy; fx-quant-kit contributors — MIT License
+strict: true
+
+theme:
+  name: material
+  language: en
+  favicon: assets/favicon.svg
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.action.edit
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.keys
+  - pymdownx.smartsymbols
+  - attr_list
+  - md_in_html
+  - def_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+      title: On this page
+
 nav:
-  - Overview: index.md
-  - Architecture: architecture.md
-  - API guide: api.md
-  - Development: development.md
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Guide:
+      - Core Concepts: guide/core-concepts.md
+  - Reference:
+      - API: reference/api.md
+      - Architecture: reference/architecture.md
+      - Conditions: reference/conditions.md
+  - Project:
+      - Development: project/development.md
+
+not_in_nav: |
+  notes/
