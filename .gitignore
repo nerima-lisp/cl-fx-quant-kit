@@ -1,0 +1,12 @@
+*.fasl
+*.dfsl
+*.fas
+*.lib
+/result
+/result-*
+/site/
+/coverage/
+tmp/
+tmp-debug/
+.serena/cache/
+.worktrees/
