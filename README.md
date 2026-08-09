@@ -1,5 +1,7 @@
 # fx-quant-kit
 
+Documentation: [fx-quant-kit](https://nerima-lisp.github.io/cl-fx-quant-kit/)
+
 `fx-quant-kit` is a pure Common Lisp toolkit for quantitative finance and FX
 analysis.  It has one public package, `FX-QUANT-KIT`, and keeps calculation
 code independent from databases, brokers, network access, wall-clock time,
@@ -36,20 +38,19 @@ dependencies: this library has no I/O boundary for them to implement.
 
 ## Quick start
 
-Load the ASDF system and use the single public package:
+Load the ASDF system and call the package-qualified public API:
 
 ```lisp
 (asdf:load-system "fx-quant-kit")
-(use-package "FX-QUANT-KIT")
 
-(mean #(1d0 2d0 3d0))
-(black-scholes-price 100d0 100d0 1d0 0.2d0 0.03d0)
+(fx-quant-kit:mean #(1d0 2d0 3d0))
+(fx-quant-kit:black-scholes-price 100d0 100d0 1d0 0.2d0 0.03d0)
 
-(let ((pair (make-currency-pair "EUR" "USD")))
-  (fx-forward-rate pair 1.10d0 0.02d0 0.04d0 0.5d0))
+(let ((pair (fx-quant-kit:make-currency-pair "EUR" "USD")))
+  (fx-quant-kit:fx-forward-rate pair 1.10d0 0.02d0 0.04d0 0.5d0))
 
-(let ((contract (make-option-contract :call 100d0 1d0)))
-  (option-contract-price contract 100d0 0.2d0 0.03d0))
+(let ((contract (fx-quant-kit:make-option-contract :call 100d0 1d0)))
+  (fx-quant-kit:option-contract-price contract 100d0 0.2d0 0.03d0))
 ```
 
 Inputs are validated at public boundaries.  Numeric functions return
