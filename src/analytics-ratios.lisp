@@ -22,9 +22,11 @@ sample standard deviation and PERIODS-PER-YEAR annualizes the ratio."
          (periods (%ensure-periods-per-year periods-per-year))
          (excess (%excess-return-vector returns rate 'returns))
          (deviation (%require-non-constant
-                     (standard-deviation excess)
+                     (sqrt (%stable-variance excess t))
                      'sharpe-ratio)))
-    (coerce (/ (* (mean excess) (sqrt periods)) deviation)
+    (coerce (/ (* (/ (%compensated-sum excess) (length excess))
+                  (sqrt periods))
+               deviation)
             'double-float)))
 
 (defun sortino-ratio (returns &key (target-return 0d0)
@@ -37,17 +39,17 @@ target return."
   (let* ((target (ensure-finite target-return 'target-return))
          (periods (%ensure-periods-per-year periods-per-year))
          (vector (%as-double-vector returns 'returns :minimum-length 1))
-         (downside (make-array (length vector)
-                               :element-type 'double-float)))
-    (loop for index below (length vector)
-          for shortfall = (max 0d0 (- target (aref vector index)))
-          do (setf (aref downside index) (* shortfall shortfall)))
-    (let ((deviation (sqrt (/ (%compensated-sum downside)
-                              (length downside)))))
+         (deviation (sqrt (/ (%compensated-sum
+                              vector
+                              (lambda (value)
+                                (let ((shortfall (max 0d0 (- target value))))
+                                  (* shortfall shortfall))))
+                            (length vector)))))
       (%require-non-constant deviation 'sortino-ratio)
-      (coerce (/ (* (- (mean vector) target) (sqrt periods))
+              (coerce (/ (* (- (/ (%compensated-sum vector) (length vector)) target)
+                    (sqrt periods))
                  deviation)
-              'double-float))))
+              'double-float)))
 
 (defun beta (returns benchmark &key (sample-p t))
   "Return the covariance beta of RETURNS against BENCHMARK."
@@ -83,7 +85,7 @@ target return."
   "Return annualized sample tracking error for two return series."
   (let* ((periods (%ensure-periods-per-year periods-per-year))
          (active (%active-returns returns benchmark)))
-    (coerce (* (standard-deviation active) (sqrt periods))
+    (coerce (* (sqrt (%stable-variance active t)) (sqrt periods))
             'double-float)))
 
 (defun information-ratio (returns benchmark &key (periods-per-year 1d0))
@@ -91,7 +93,9 @@ target return."
   (let* ((periods (%ensure-periods-per-year periods-per-year))
          (active (%active-returns returns benchmark))
          (deviation (%require-non-constant
-                     (standard-deviation active)
+                     (sqrt (%stable-variance active t))
                      'information-ratio)))
-    (coerce (/ (* (mean active) (sqrt periods)) deviation)
+    (coerce (/ (* (/ (%compensated-sum active) (length active))
+                  (sqrt periods))
+               deviation)
             'double-float)))

@@ -26,6 +26,14 @@ the check-enabled derivation and `cl-nix-forge`'s SBCL `sb-cover` runner to
 force-load the target system under coverage instrumentation.  The test runner
 also forwards `cl-weave` coverage thresholds for direct test invocations.
 
+## Performance benchmarks
+
+Run `sbcl --script benchmarks/performance.lisp` from the repository root to
+measure representative analytics and simulation hot paths.  The benchmark
+reports elapsed time, allocated bytes, and a deterministic result digest for
+each workload.  Compare the digests when changing an implementation so an
+allocation or loop optimization does not silently change numerical results.
+
 Before changing a numerical definition, add a reference-value test and an
 invalid-input test.  Keep the public package single and do not move execution
 or persistence concerns into this repository.
@@ -38,5 +46,5 @@ creating a release tag, run the canonical test command, `nix flake check
 name matches the ASDF version with a `v` prefix, for example:
 
 ```sh
-git tag -a v0.5.0 -m "Release v0.5.0"
+git tag -a v0.5.1 -m "Release v0.5.1"
 ```

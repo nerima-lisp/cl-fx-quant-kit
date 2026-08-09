@@ -14,4 +14,4 @@ non-goal list.
 ## Versioning
 
 The ASDF system version is the release version. Releases use matching
-annotated Git tags with a `v` prefix, such as `v0.5.0`.
+annotated Git tags with a `v` prefix, such as `v0.5.1`.

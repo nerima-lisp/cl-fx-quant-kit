@@ -46,22 +46,23 @@ SERIES is a sequence of observation sequences, one sequence per asset."
   "Return a symmetric Pearson correlation matrix for asset SERIES."
   (let* ((vectors (%as-series series 'series :minimum-length 2))
          (count (length vectors))
+         (deviations (make-array count :element-type 'double-float))
          (matrix (make-array (list count count)
                              :element-type 'double-float)))
+    (loop for index below count
+          for deviation = (sqrt (%stable-variance (aref vectors index) t))
+          do (when (zerop deviation)
+               (error 'numerical-error
+                      :operation 'correlation-matrix))
+             (setf (aref deviations index) deviation))
     (loop for row below count
           do (loop for column from row below count
-                   for row-deviation = (standard-deviation (aref vectors row))
-                   for column-deviation =
-                     (standard-deviation (aref vectors column))
-                   do (when (or (zerop row-deviation)
-                                (zerop column-deviation))
-                        (error 'numerical-error
-                               :operation 'correlation-matrix))
-                      (let ((value (/ (%stable-covariance
+                   do (let ((value (/ (%stable-covariance
                                        (aref vectors row)
                                        (aref vectors column)
                                        t)
-                                       (* row-deviation column-deviation))))
+                                       (* (aref deviations row)
+                                          (aref deviations column)))))
                         (setf (aref matrix row column) value
                               (aref matrix column row) value))))
     matrix))
