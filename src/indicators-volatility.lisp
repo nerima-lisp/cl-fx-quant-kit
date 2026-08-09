@@ -13,7 +13,8 @@
           for deviation = (sqrt
                            (/ (loop for offset below window
                                     for value = (aref vector (- index offset))
-                                    sum (expt (- value location) 2)
+                                    for difference = (- value location)
+                                    sum (* difference difference)
                                       into total of-type double-float
                                     finally (return total))
                               window))

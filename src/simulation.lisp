@@ -2,6 +2,7 @@
 
 (defconstant +simulation-modulus+ 2147483647)
 (defconstant +simulation-multiplier+ 48271)
+(defconstant +simulation-modulus-double+ 2147483647d0)
 
 (defstruct (simulation-rng
              (:constructor %make-simulation-rng (seed)))
@@ -23,18 +24,27 @@ generator's nonzero state range."
     (error 'invalid-argument :name :rng :value rng))
   rng)
 
-(defun rng-uniform (rng)
-  "Advance RNG and return a double-float uniform variate in (0, 1)."
-  (%ensure-rng rng)
+(defun %rng-uniform (rng)
   (let* ((next (mod (* +simulation-multiplier+ (simulation-rng-seed rng))
                     +simulation-modulus+))
          (state (if (zerop next) 1 next)))
     (setf (simulation-rng-seed rng) state)
-    (/ (coerce state 'double-float) (coerce +simulation-modulus+ 'double-float))))
+    (/ (coerce state 'double-float) +simulation-modulus-double+)))
+
+(defun rng-uniform (rng)
+  "Advance RNG and return a double-float uniform variate in (0, 1)."
+  (%rng-uniform (%ensure-rng rng)))
+
+(defun %rng-normal (rng)
+  (let* ((u1 (%rng-uniform rng))
+         (u2 (%rng-uniform rng)))
+    (* (sqrt (* -2d0 (log u1)))
+       (cos (* 2d0 pi u2)))))
 
 (defun rng-normal (rng)
   "Advance RNG and return a standard normal variate."
-  (let* ((u1 (rng-uniform rng))
+  (let* ((rng (%ensure-rng rng))
+         (u1 (rng-uniform rng))
          (u2 (rng-uniform rng)))
     (* (sqrt (* -2d0 (log u1)))
        (cos (* 2d0 pi u2)))))
@@ -57,6 +67,35 @@ generator's nonzero state range."
               for shock = (rng-normal rng)
               do (setf (aref path step)
                        (funcall transition previous shock)))
+        (setf (aref result path-index) path)))))
+
+(defun %simulate-geometric-brownian-paths
+    (initial-value steps paths rng drift-term diffusion-term)
+  (let ((result (make-array paths)))
+    (dotimes (path-index paths result)
+      (let ((path (make-array (1+ steps) :element-type 'double-float)))
+        (setf (aref path 0) initial-value)
+        (loop for step from 1 to steps
+              for previous = (aref path (1- step))
+              for shock = (%rng-normal rng)
+              do (setf (aref path step)
+                       (* previous
+                          (exp (+ drift-term (* diffusion-term shock))))))
+        (setf (aref result path-index) path)))))
+
+(defun %simulate-ornstein-uhlenbeck-paths
+    (initial-value steps paths rng long-term-mean decay innovation-scale)
+  (let ((result (make-array paths)))
+    (dotimes (path-index paths result)
+      (let ((path (make-array (1+ steps) :element-type 'double-float)))
+        (setf (aref path 0) initial-value)
+        (loop for step from 1 to steps
+              for previous = (aref path (1- step))
+              for shock = (%rng-normal rng)
+              do (setf (aref path step)
+                       (+ long-term-mean
+                          (* (- previous long-term-mean) decay)
+                          (* innovation-scale shock))))
         (setf (aref result path-index) path)))))
 
 (defun %ornstein-uhlenbeck-innovation-scale
@@ -87,10 +126,8 @@ reproducible when created from the same seed."
            (drift-term
              (* (- drift (* 0.5d0 (expt volatility 2))) time-step))
            (diffusion-term (* volatility sqrt-time-step)))
-      (%simulate-paths
-       initial-value steps paths rng
-       (lambda (previous shock)
-         (* previous (exp (+ drift-term (* diffusion-term shock)))))))))
+      (%simulate-geometric-brownian-paths
+       initial-value steps paths rng drift-term diffusion-term))))
 
 (defun simulate-ornstein-uhlenbeck
     (initial-value mean-reversion-speed long-term-mean volatility
@@ -114,9 +151,5 @@ random walk."
            (innovation-scale
              (%ornstein-uhlenbeck-innovation-scale
               mean-reversion-speed volatility time-step)))
-      (%simulate-paths
-       initial-value steps paths rng
-       (lambda (previous shock)
-         (+ long-term-mean
-            (* (- previous long-term-mean) decay)
-            (* innovation-scale shock)))))))
+      (%simulate-ornstein-uhlenbeck-paths
+       initial-value steps paths rng long-term-mean decay innovation-scale))))

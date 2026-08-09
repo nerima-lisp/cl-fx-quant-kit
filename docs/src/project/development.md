@@ -46,3 +46,22 @@ signature or API page. Add tests for numerical behavior, boundary validation,
 and any new value-record invariant. Run the narrowest relevant test first,
 then the complete test command and strict documentation build before handing
 off a change.
+
+## Performance benchmarks
+
+Run `sbcl --script benchmarks/performance.lisp` from the repository root to
+measure representative analytics and simulation hot paths. The benchmark
+reports elapsed time, allocated bytes, and a deterministic result digest for
+each workload. Compare the digests when changing an implementation so an
+allocation or loop optimization does not silently change numerical results.
+
+## Release
+
+Use the `:version` value in `fx-quant-kit.asd` as the release version. Before
+creating a release tag, run the canonical test command, `nix flake check
+--print-build-logs`, and `git diff --check`. Create an annotated tag whose
+name matches the ASDF version with a `v` prefix, for example:
+
+```sh
+git tag -a v0.5.1 -m "Release v0.5.1"
+```

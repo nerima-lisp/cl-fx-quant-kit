@@ -5,7 +5,7 @@
   :long-description "Pure numerical, market-data, FX, pricing, indicator, simulation, risk, time, and JSON primitives with deterministic contracts."
   :author "fx-quant-kit contributors"
   :maintainer "fx-quant-kit contributors"
-  :version "0.5.0"
+  :version "0.5.1"
   :homepage "https://github.com/nerima-lisp/cl-fx-quant-kit"
   :bug-tracker "https://github.com/nerima-lisp/cl-fx-quant-kit/issues"
   :source-control (:git "https://github.com/nerima-lisp/cl-fx-quant-kit.git")
@@ -53,7 +53,7 @@
   :long-description "Deterministic contract and numerical tests for fx-quant-kit."
   :author "fx-quant-kit contributors"
   :maintainer "fx-quant-kit contributors"
-  :version "0.5.0"
+  :version "0.5.1"
   :homepage "https://github.com/nerima-lisp/cl-fx-quant-kit"
   :bug-tracker "https://github.com/nerima-lisp/cl-fx-quant-kit/issues"
   :source-control (:git "https://github.com/nerima-lisp/cl-fx-quant-kit.git")

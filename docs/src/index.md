@@ -26,5 +26,5 @@ The package is a calculation library, not a market-data client, trading
 engine, persistence layer, or portfolio application. Callers provide data and
 choose the operational policies around it.
 
-The ASDF system currently reports version `0.5.0`. The public API is evolving;
+The ASDF system currently reports version `0.5.1`. The public API is evolving;
 pin a release when reproducibility matters.

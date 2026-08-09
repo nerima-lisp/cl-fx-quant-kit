@@ -26,13 +26,23 @@ observation is strictly below that threshold, the threshold itself is used."
          (level (%ensure-confidence confidence))
          (scale (ensure-positive notional 'notional))
          (threshold (quantile sample (- 1d0 level)))
-         (tail (loop for value across sample
-                     when (<= value threshold)
-                       collect value)))
+         (tail-count 0)
+         (tail-sum 0d0)
+         (tail-correction 0d0))
+    (loop for value across sample
+          when (<= value threshold)
+            do (incf tail-count)
+               (let ((next (+ tail-sum value)))
+                 (if (>= (abs tail-sum) (abs value))
+                     (incf tail-correction
+                           (+ (- tail-sum next) value))
+                     (incf tail-correction
+                           (+ (- value next) tail-sum)))
+                 (setf tail-sum next)))
     (* scale
        (max 0d0
-            (- (if tail
-                   (mean tail)
+            (- (if (plusp tail-count)
+                   (/ (+ tail-sum tail-correction) tail-count)
                    threshold))))))
 
 (defun parametric-var (mean-return volatility confidence &key (notional 1d0))
@@ -91,7 +101,14 @@ clipped, allowing callers to inspect negative edge or apply their own cap."
 
 (defun max-drawdown (wealth)
   "Return the maximum percentage drawdown of a wealth series."
-  (reduce #'max (drawdown-series wealth)))
+  (let ((values (%as-double-vector wealth 'wealth :minimum-length 1))
+        (peak 0d0)
+        (maximum 0d0))
+    (loop for value across values
+          do (ensure-positive value 'wealth)
+             (setf peak (max peak value)
+                   maximum (max maximum (- 1d0 (/ value peak)))))
+    maximum))
 
 (defun %ensure-covariance-matrix (matrix dimension)
   (unless (and (arrayp matrix)
