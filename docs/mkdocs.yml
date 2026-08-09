@@ -1,0 +1,8 @@
+site_name: fx-quant-kit
+site_description: Pure quantitative finance and FX calculations for Common Lisp
+docs_dir: src
+nav:
+  - Overview: index.md
+  - Architecture: architecture.md
+  - API guide: api.md
+  - Development: development.md
