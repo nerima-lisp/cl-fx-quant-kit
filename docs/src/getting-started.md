@@ -11,7 +11,7 @@ With the repository available to ASDF:
 (asdf:load-system :fx-quant-kit)
 ```
 
-The runtime dependencies are `cl-date-kit`, `cl-json-kit`, and `cl-prolog`.
+The runtime dependencies are `cl-date-kit`, `cl-json-kit`, and `cl-prolog-kit`.
 They provide time values, JSON conversion, and the small rule engine used by
 risk decisions; the library itself performs no network or file I/O.
 

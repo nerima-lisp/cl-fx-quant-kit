@@ -1,7 +1,7 @@
 (in-package #:fx-quant-kit)
 
 (defparameter *risk-decision-rules*
-  (cl-prolog:prolog
+  (cl-prolog-kit:prolog
     ((decision :block :blackout ?state)
      (:when (risk-decision-state-blackout-p ?state)))
     ((decision :block :drawdown ?state)

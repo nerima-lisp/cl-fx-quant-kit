@@ -10,7 +10,7 @@
   :bug-tracker "https://github.com/nerima-lisp/cl-fx-quant-kit/issues"
   :source-control (:git "https://github.com/nerima-lisp/cl-fx-quant-kit.git")
   :license "MIT"
-  :depends-on ("cl-date-kit" "cl-json-kit" "cl-prolog")
+  :depends-on ("cl-date-kit" "cl-json-kit" "cl-prolog-kit")
   :pathname "src"
   :serial t
   :components ((:file "package")

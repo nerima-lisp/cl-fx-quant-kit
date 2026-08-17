@@ -19,8 +19,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    cl-prolog = {
-      url = "github:nerima-lisp/cl-prolog/v1.4.3";
+    cl-prolog-kit = {
+      url = "github:nerima-lisp/cl-prolog-kit/v1.5.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -47,7 +47,7 @@
       cl-nix-forge,
       cl-date-kit,
       cl-json-kit,
-      cl-prolog,
+      cl-prolog-kit,
       cl-weave,
       paredit-cli,
       treefmt-nix,
@@ -74,7 +74,7 @@
       lispDependencies = ctx: [
         cl-date-kit.packages.${ctx.system}.cl-date-kit
         cl-json-kit.packages.${ctx.system}.cl-json-kit
-        cl-prolog.packages.${ctx.system}.cl-prolog
+        cl-prolog-kit.packages.${ctx.system}.cl-prolog-kit
       ];
 
       lispCheckDependencies = ctx: [
