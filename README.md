@@ -28,7 +28,7 @@ The library provides:
 - JSON boundaries for the value types.
 
 The implementation uses `cl-date-kit` for timestamp conversion,
-`cl-json-kit` for JSON encoding/decoding, and `cl-prolog` for declarative rule
+`cl-json-kit` for JSON encoding/decoding, and `cl-prolog-kit` for declarative rule
 evaluation.  Tests use `cl-weave`; structural Lisp checks use `paredit-cli`.
 The Nix environment is assembled with `cl-nix-forge` and `treefmt-nix`.
 These are direct dependencies because the corresponding APIs are called by the

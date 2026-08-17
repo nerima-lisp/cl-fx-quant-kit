@@ -32,7 +32,7 @@
            (merge-pathnames "coverage/" root)))))
 
   (defun preload-dependencies ()
-    (dolist (system '("cl-weave" "cl-date-kit" "cl-json-kit" "cl-prolog"))
+    (dolist (system '("cl-weave" "cl-date-kit" "cl-json-kit" "cl-prolog-kit"))
       (asdf:load-system system)))
 
   (defun coverage-excluded-pathnames (root)

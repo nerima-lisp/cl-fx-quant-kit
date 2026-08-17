@@ -32,7 +32,7 @@ The test system is kept in `t/` and is loaded through the root test runner.
 ## Dependency policy
 
 The runtime depends on small pure packages: `cl-date-kit` for time values,
-`cl-json-kit` for JSON objects and text, and `cl-prolog` for risk-decision
+`cl-json-kit` for JSON objects and text, and `cl-prolog-kit` for risk-decision
 rules. `cl-weave` is a test and coverage dependency. Application concerns such
 as transport, persistence, exchange connectivity, and order execution remain
 outside this system.
