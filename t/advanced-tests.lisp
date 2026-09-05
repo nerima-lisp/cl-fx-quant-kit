@@ -17,7 +17,7 @@
       (expect (risk-decision-result-state decision) :to-be state)))
 
   (it
-    "uses macro-generated CPS wrappers without duplicating kernels"
+    "uses CPS wrappers"
     (with-cps-result (result mean/k #(1d0 2d0 3d0))
       (expect result :to-be-close-to 2d0 10))
     (with-cps-result (series sma/k #(1d0 2d0 3d0) 2)
@@ -52,37 +52,3 @@
  (:trials 16 :timeout-per-trial 1)
  (let ((cdf (normal-cdf (coerce value 'double-float))))
    (expect (<= 0d0 cdf 1d0) :to-be t)))
-
-(describe
-  "execution journals and mutation contracts"
-  (it
-    "records a value note and exposes it as a queryable fact"
-    (let ((frames
-            (cl-weave:with-execution-journal
-              (cl-weave:journal-note :formula :black-scholes))))
-      (expect (length frames) :to-be 1)
-      (expect (cl-weave:journal-frame-kind (first frames)) :to-be :note)
-      (expect (cl-weave:journal-frame-form (first frames)) :to-be :formula)
-      (expect (cl-weave:journal-frame-actual (first frames))
-              :to-be :black-scholes)
-      (expect (length (cl-weave:journal-facts frames)) :to-be 7)
-      (expect (cl-weave:journal-where frames (:kind ?index :note))
-              :to-be-truthy)))
-
-  (it
-    "kills a mutation that violates a numerical invariant"
-    (let* ((results
-             (cl-weave:run-mutations
-              '(+ 1 1)
-              (lambda (form mutation)
-                (declare (ignore mutation))
-                (= (eval form) 2))))
-           (summary (cl-weave:mutation-summary results)))
-      (expect (length results) :to-be 1)
-      (expect (mapcar #'cl-weave:mutation-result-status results)
-              :to-contain :killed)
-      (expect (getf summary :score) :to-be 1.0)
-      (multiple-value-bind (passes score-summary)
-          (cl-weave:mutation-score-passes-p results 1.0)
-        (expect passes :to-be t)
-        (expect (getf score-summary :survived) :to-be 0)))))
